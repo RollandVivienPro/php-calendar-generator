@@ -34,17 +34,28 @@ class MonthGen {
 
     }
 
+    /**
+     * Return the first day month
+     *
+     * @return \DateTimeImmutable
+     */
     public function getFirstDay() :\DateTimeImmutable
     {
         return new \DateTimeImmutable("{$this->year}-{$this->month}-1");
     }
 
-    public function getFirstDayNum(){
+    /**
+     * Return the first day num (1 to 7)
+     *
+     * @return integer
+     */
+    public function getFirstDayNum() :int{
         return $this->getFirstDay()->format('N') ;
     }
 
     /**
-     * Retourne le jour du dernier lundi avant le mois
+     * Return the day of the first monday of the month
+     * Used in the next function to start the calcul at the very first day of month;
      *
      * @return \DateTimeImmutable
      */
@@ -54,8 +65,8 @@ class MonthGen {
     }
 
     /**
-     * Retourne le jour courant, incrémenté du jour suivant, au format dateTime
-     * il prend en paramètre les index des 2 boucles dans la view : l'index de tous les jours du moids, et l'index du jour de la semaine
+     * Return the first day of the month with an addition : $k day of week (1 ..7) + $i (num of the week) * 7
+     * Used in the iterator algorithm to generate the month, check the test.php exemple
      *
      * @param integer $i
      * @param integer $k
@@ -66,8 +77,7 @@ class MonthGen {
     }
 
     /**
-     * Retourne vrai ou faux si le jour passé en paramètre est un jour du mois
-     * Utile pour coller une class css sur les jours du calendrier qui ne sont pas des jours du mois affiché
+     * Return false if the day in parameter is not a day of the month
      *
      * @param \DateTimeImmutable $incDay
      * @return boolean
@@ -77,7 +87,7 @@ class MonthGen {
     }
 
     /**
-     * Retourne vrai ou faux si le jour passé en paramètre est aujourd'hui
+     * Return true if the day is today;
      *
      * @param \DateTimeImmutable $day
      * @return boolean
@@ -87,7 +97,7 @@ class MonthGen {
     }
 
     /**
-     * Retourne vrai ou faux si le jour passé en paramètre est un samedi ou un dimanche
+     * Return true if the day is saturday or sunday
      *
      * @param \DateTimeImmutable $day
      * @return boolean
@@ -96,20 +106,41 @@ class MonthGen {
         return $day->format('N') >= 6;
     }
 
-    public function getLastDay()
+    /**
+     * Return the last day of the month
+     *
+     * @return \DateTimeImmutable
+     */
+    public function getLastDay() :\DateTimeImmutable
     {
         return $this->getFirstDay()->modify('+1 month - 1 day');
     }
 
-    public function getLastDayNum(){
+    /**
+     * Return the last day num (1 to 7)
+     *
+     * @return integer
+     */
+
+    public function getLastDayNum() : int {
         return $this->getLastDay()->format('N') ;
     }
 
+    /**
+     * Total days in the month
+     *
+     * @return integer
+     */
     public function getNumberOfDays() : int 
     {
         return (int) $this->getLastDay()->format('d');
     }
 
+    /**
+     * Calcul the number of weeks in the month, Use to iterate in the view, check the test.php exemple
+     *
+     * @return integer
+     */
     public function getNumberOfWeeks() : int {
         $lw = (int) $this->getLastDay()->format('W') === 1 ? 53 : (int) $this->getLastDay()->format('W');
         $fw = (int) $this->getFirstDay()->format('W') === 52 ? 0 : (int) $this->getFirstDay()->format('W');
@@ -118,47 +149,7 @@ class MonthGen {
     }
 
     /**
-     * Get the value of year
-     */ 
-    public function getYear()
-    {
-        return $this->year;
-    }
-
-    /**
-     * Set the value of year
-     *
-     * @return  self
-     */ 
-    public function setYear($year) : MonthGen
-    {
-        $this->year = $year;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of month
-     */ 
-    public function getMonth()
-    {
-        return $this->month;
-    }
-
-    /**
-     * Set the value of month
-     *
-     * @return  self
-     */ 
-    public function setMonth($month) : MonthGen
-    {
-        $this->month = $month;
-
-        return $this;
-    }
-
-    /**
-     * Retourne le mois précédent
+     * Get the prev month
      *
      * @return MonthGen
      */
@@ -173,7 +164,7 @@ class MonthGen {
     }
 
     /**
-     * Retourne le mois suivant
+     * Get the next month
      *
      * @return MonthGen
      */
@@ -185,6 +176,50 @@ class MonthGen {
             $year +=1;
         }
         return new MonthGen(['year'=>$year,'month'=>$month]);
+    }
+
+    /**
+     * Get the value of year
+     * 
+     * @return int
+     */ 
+    public function getYear() : int
+    {
+        return $this->year;
+    }
+
+    /**
+     * Set the value of year
+     *
+     * @return  self
+     */ 
+    public function setYear(int $year) : MonthGen
+    {
+        $this->year = $year;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of month
+     * 
+     * @return int
+     */ 
+    public function getMonth() :int
+    {
+        return $this->month;
+    }
+
+    /**
+     * Set the value of month
+     *
+     * @return  self
+     */ 
+    public function setMonth(int $month) : MonthGen
+    {
+        $this->month = $month;
+
+        return $this;
     }
 
 }
